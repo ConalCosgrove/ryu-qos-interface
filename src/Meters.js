@@ -10,7 +10,7 @@ class Meters extends Component {
     layoutMeters() {
         getMeters(this.props.id).then((res) => {
             const meters = JSON.parse(res)[0].command_result;
-            if (meters.result === 'failure') {
+            if (meters[parseInt(this.props.id)]) {
                 this.setState({meters: 'No Meters Installed'})
             } else {
                 this.setState({meters:meters});
@@ -24,11 +24,11 @@ class Meters extends Component {
 
     render() {
         const id = parseInt(this.props.id);
-        return (this.state.meters && this.state.meters[id] ? 
+        return (this.state.meters && this.state.meters !== 'No Meters Installed' && this.state.meters[id] ? 
             this.state.meters[id].map((meter) => {
                 return <div><p>id: {meter.meter_id} Bytes: {JSON.stringify(meter.band_stats[0].byte_band_count)} Packets {JSON.stringify(meter.band_stats[0].packet_band_count)}</p></div>
             })
-            : 'Loading Meter Info...'
+            : this.state.meters || 'Loading Meter Info...'
         )
     }
 }

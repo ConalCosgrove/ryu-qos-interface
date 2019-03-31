@@ -1,8 +1,9 @@
 import React from 'react';
-import Queues from './QOS';
+import Queues from './Queues';
 import Rules from './Rules';
 import Meters from './Meters';
-import AddMeter from './AddMeter';
+import Card from 'react-bootstrap/Card';
+import Button from 'react-bootstrap/Button';
 class Switches extends React.Component {
   constructor(props) {
     super(props);
@@ -14,11 +15,19 @@ class Switches extends React.Component {
       const layout = res.map(function (swi) {
         return (
         <div>
-            <h2>Switch {parseInt(swi.dpid)}</h2>
-            <p> Ports: {swi.ports.map(p => <li>{p.name}, port_no: {parseInt(p.port_no)}, hw_addr: {p.hw_addr}</li>)}</p>
-            <p> Queues: <Queues id={swi.dpid}/></p>
-            <p> Rules: <Rules id={swi.dpid}/></p>
-            <p> Meters: <Meters id={swi.dpid}/></p>
+
+            <Card style={{ width: '25rem', margin: '10px'}}>
+              <Card.Body>
+                <Card.Title>Switch {parseInt(swi.dpid)}</Card.Title>
+
+                <div>Ports: {swi.ports.map(p => <li>{p.name}, port_no: {parseInt(p.port_no)}, hw_addr: {p.hw_addr}</li>)}</div>
+                <div>Queues: <Queues id={swi.dpid}/></div>
+                <div>Rules: <Rules id={swi.dpid}/></div>
+                <div>Meters: <Meters id={swi.dpid}/></div>
+                <Card.Text></Card.Text>
+              </Card.Body>
+            </Card>
+
 
         </div>
         )

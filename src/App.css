@@ -1,6 +1,5 @@
 .App {
-  text-align: center;
-  display: flex;
+  text-align: left;
 }
 
 .App-logo {
@@ -11,13 +10,34 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 5vh;
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: left;
+  padding-left: 30px;
   justify-content: left;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+Button {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.columnHolder {
+  display: flex;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.mainContainer {
+  padding-left: 30px;
 }
 
 .p {
