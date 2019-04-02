@@ -21,7 +21,6 @@ class AddQueue extends Component {
 
       formChange(e) {
           const className = e.nativeEvent.target.className.split(' ')[0];
-          console.log(className);
 
           if (!className.match(/queue_\w*/g)) {
             const newState = {};
@@ -29,12 +28,14 @@ class AddQueue extends Component {
             this.setState(newState);
           } else {
               const {queues} = this.state;
-              const q = queues[0] ? queues[0] : {};
-              const rate = className.split('queue_')[1];
+              const index = className.split('_rate')[1];
+              const q = queues[index] ? queues[index] : {};
+              let rate = className.split('queue_')[1];
+              rate = rate.split('_rate')[0] + '_rate';
               const newRate = parseInt(e.nativeEvent.target.value)
               if (newRate || newRate === 0) {
                 q[rate] = String(newRate);
-                queues[0] = q;
+                queues[index] = q;
                 this.setState({queues});
               }
           }
@@ -44,26 +45,28 @@ class AddQueue extends Component {
 
       queueRequest() {
           createQueue(this.state, this.props.switch.dpid).then((res) => {
-              console.log(res);
           })
       }
 
     render() {
         return (
 <div>
+
     <Form onSubmit={e => this.handleSubmit(e)}>
+    Egress Port:
     <InputGroup className="mb-3">
         <Form.Control as="select"onChange={(e)=> {this.formChange(e)}} className='port_name'>
                 {mapOptions(this.props.switch)}
         </Form.Control>
   </InputGroup>
-
+    Queue Type:
   <InputGroup className="mb-3">
         <Form.Control as="select" onChange={(e)=> {this.formChange(e)}} className='type'>
                 <option>linux-htb</option>
                 <option>linux-other</option>
         </Form.Control>
   </InputGroup>
+  Queue Total Max Rate:
   <InputGroup className="mb-3">
     <FormControl onChange={(e)=> {this.formChange(e)}} className='max_rate'
       placeholder="Max Rate"
@@ -75,14 +78,32 @@ class AddQueue extends Component {
   </InputGroup >
   Queues:
   <InputGroup className="queue mb-3" onChange={(e) => this.formChange(e)}>
-    <FormControl className='queue_min_rate'
+    <FormControl className='queue_min_rate0'
       placeholder="Min Rate"
       aria-describedby="basic-addon1"
     />
     <InputGroup.Append>
         <InputGroup.Text id="basic-addon2">bps</InputGroup.Text>
     </InputGroup.Append>
-    <FormControl className='queue_max_rate'
+
+    <FormControl className='queue_max_rate0'
+      placeholder="Max Rate"
+      aria-describedby="basic-addon1"
+    />
+    <InputGroup.Append>
+        <InputGroup.Text id="basic-addon2">bps</InputGroup.Text>
+    </InputGroup.Append>
+    </InputGroup>
+
+    <InputGroup className="queue mb-3" onChange={(e) => this.formChange(e)}>
+    <FormControl className='queue_min_rate1'
+      placeholder="Min Rate"
+      aria-describedby="basic-addon1"
+    />
+    <InputGroup.Append>
+        <InputGroup.Text id="basic-addon2">bps</InputGroup.Text>
+    </InputGroup.Append>
+    <FormControl className='queue_max_rate1'
       placeholder="Max Rate"
       aria-describedby="basic-addon1"
     />
@@ -90,7 +111,6 @@ class AddQueue extends Component {
         <InputGroup.Text id="basic-addon2">bps</InputGroup.Text>
     </InputGroup.Append>
   </InputGroup>
-  <Button varaint="Secondary">Add Queue</Button>
   <Button variant="primary" onClick={()=> this.queueRequest()}>
         Create
   </Button>
@@ -107,6 +127,10 @@ function mapOptions (options) {
 }
 
 function createQueue (data, path) {
+    if (data.max_rate === 0) {
+        console.log('delete max rate');
+        delete data.max_rate;
+    }
     return new Promise((resolve, reject) => {
         fetch(`http://localhost:3333/qos/queue/${path}`, {
             method: "POST", // *GET, POST, PUT, DELETE, etc.

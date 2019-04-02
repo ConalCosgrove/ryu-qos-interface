@@ -7,7 +7,6 @@ import * as serviceWorker from './serviceWorker';
 let exp = 0;
 
 function setExperiment(experiment) {
-    console.log('hi');
     exp = experiment;
     renderUI();
 }

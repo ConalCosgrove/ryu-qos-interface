@@ -31,7 +31,6 @@ function getQueues(id) {
         fetch(url)
         .then((request) => {
             request.text().then((res) => {
-                console.log('GOT',res);
                 resolve(res);
             });
         })
@@ -47,6 +46,7 @@ function createQueueTable(data) {
     <Table striped bordered hover>
     <thead>
         <tr>
+        <th>Id</th>
         <th>Port Name</th>
         <th>Min Rate</th>
         <th>Max Rate</th>
@@ -57,8 +57,7 @@ function createQueueTable(data) {
             data && Object.keys(data).map((portName) => {
                 return Object.keys(data[portName]).map((id) => {
                     const queue = data[portName][id].config;
-                    console.log(queue)
-                    return <tr><td>{portName}</td><td>{queue['min-rate']}</td><td>{queue['max-rate']}</td></tr>
+                    return <tr><td>{id}</td><td>{portName}</td><td>{queue['min-rate']}</td><td>{queue['max-rate']}</td></tr>
                 })
             })
         }
@@ -68,20 +67,3 @@ function createQueueTable(data) {
 }
 
 export default Queues;
-
-/**
- *         <tr>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-        </tr>
-        <tr>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-        </tr>
-        <tr>
-        <td colSpan="2">Larry the Bird</td>
-        <td>@twitter</td>
-        </tr>
- */

@@ -13,9 +13,6 @@ class AddMeter extends Component {
         return (
 <div>
   <InputGroup className="mb-3">
-    <InputGroup.Prepend>
-      <InputGroup.Text id="basic-addon1">@</InputGroup.Text>
-    </InputGroup.Prepend>
     <FormControl
       placeholder="Port Name"
       aria-label="Username"
