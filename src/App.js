@@ -18,7 +18,7 @@ class App extends Component {
         return <Switches/>
       }
       default: {
-        return <h1>hi</h1>
+        return <QueueOnSwitch/>
       }
     }
   }

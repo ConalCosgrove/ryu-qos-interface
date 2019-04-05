@@ -9,7 +9,6 @@ class Rules extends Component {
 
     layoutRules() {
         getRules(this.props.id).then((res) => {
-            console.log(res);
             if (JSON.parse(res)[0].command_result.result === 'failure') {
                 this.setState({rules: 'No Rules Installed'})
             } else {
@@ -57,7 +56,7 @@ function createRuleTable(data) {
         {
             data && data.map((rule) => {
 
-                    return <tr><td>{rule.priority}</td><td>{rule.nw_dst}</td><td>{rule.tp_dst}</td><td>{JSON.stringify(rule.actions)}</td></tr>
+                    return <tr><td>{rule.priority}</td><td>{rule.nw_dst}</td><td>{rule.tp_dst}</td><td>{JSON.stringify(rule.actions[0])}</td></tr>
 
             })
         }

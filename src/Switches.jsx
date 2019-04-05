@@ -1,43 +1,97 @@
 import React from 'react';
-import Queues from './Queues';
-import Rules from './Rules';
-import Meters from './Meters';
+import Table from 'react-bootstrap/Table';
 import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
+
+const nodes = {source: null, destination: null};
+
 class Switches extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {switches: null};
+    this.state = {switches: null, path: null};
     this.layoutSwitches();
   }
+
+  formChange(e) {
+    const className = e.nativeEvent.target.className.split(' ')[0];
+
+    if (nodes[className] !== undefined) {
+      nodes[className] = e.nativeEvent.target.value;
+    }
+  }
+
+  clickHandler() {
+    postCompute(nodes).then((path) => {
+      console.log(path);
+      const pth = JSON.parse(path).map((hop) => {
+        return (
+          `${hop} ➡️ `
+        )
+      });
+      this.setState({path: pth});
+    });
+  }
+
   layoutSwitches() {
     getSwitches().then((res) => {
-      const layout = res.map(function (swi) {
+      const items = res.map((switcheroo) => {
         return (
-        <div>
-
-            <Card style={{ width: '25rem', margin: '10px'}}>
-              <Card.Body>
-                <Card.Title>Switch {parseInt(swi.dpid)}</Card.Title>
-
-                <div>Ports: {swi.ports.map(p => <li>{p.name}, port_no: {parseInt(p.port_no)}, hw_addr: {p.hw_addr}</li>)}</div>
-                <div>Queues: <Queues id={swi.dpid}/></div>
-                <div>Rules: <Rules id={swi.dpid}/></div>
-                <div>Meters: <Meters id={swi.dpid}/></div>
-                <Card.Text></Card.Text>
-              </Card.Body>
-            </Card>
-
-
-        </div>
-        )
-      })
-      this.setState({switches: layout});
+          <tr>
+          <td>{switcheroo.dpid}</td>
+          </tr>
+          )
+      });
+      this.setState({switches: items});
     });
   }
 
   render() {
-    return this.state.switches ? this.state.switches : <p>Loading Switches...</p>;
+    return (
+      <div className='column'>
+    <h1>Path Calculation:</h1>
+    <Card style={{ width: '30rem', margin: '10px'}}>
+    <Table striped bordered hover>
+    <thead>
+    <tr>
+        <th>Network Switch IDs</th>
+        </tr>
+    </thead>
+    <tbody>
+    {this.state.switches}
+    </tbody>
+    </Table>
+    </Card>
+
+    <Card style={{ width: '30rem', margin: '10px'}}>
+      <Card.Body>
+      <h3>Compute A Path</h3>
+      <Form onSubmit={e => this.handleSubmit(e)}>
+    Source Id:
+    <InputGroup className="mb-3">
+        <FormControl onChange={(e)=> {this.formChange(e)}} className='source'
+        placeholder="Source"
+        aria-describedby="basic-addon1"
+        />
+    </InputGroup>
+    Destination Id:
+    <InputGroup className="mb-3">
+        <FormControl onChange={(e)=> {this.formChange(e)}} className='destination'
+        placeholder="Destination"
+        aria-describedby="basic-addon1"
+        />
+    </InputGroup>
+    <Button onClick={() => this.clickHandler()}>Calculate</Button>
+    <Card.Text></Card.Text>
+    
+    </Form>
+    </Card.Body>
+    </Card>
+    <h4>Path: {this.state.path ? this.state.path : 'Not Calculated'}</h4>
+  </div>
+    )
   }
 }
 
@@ -50,6 +104,24 @@ function getSwitches() {
             });
     })
     });
+}
+
+function postCompute(data) {
+  console.log('Posting', data);
+  return new Promise((resolve, reject) => {
+    fetch(`http://localhost:3333/topology`, {
+            method: "POST", // *GET, POST, PUT, DELETE, etc.
+            headers: {
+                'Content-Type': 'application/JSON'
+            },
+            body: JSON.stringify(data), // body data type must match "Content-Type" header
+  })
+  .then((request) => {
+    request.text().then((res) => {
+        resolve(res);
+    });
+})
+  })
 }
 
 export default Switches;

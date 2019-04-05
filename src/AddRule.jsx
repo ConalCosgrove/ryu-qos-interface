@@ -8,9 +8,6 @@ import Button from 'react-bootstrap/Button';
 class AddRule extends Component {
     constructor(props) {
         super(props);
-        const defaultPortName = this.props.switch.ports[0].name || null;
-        const defaultType = 'linux-htb';
-        const defaultMaxRate = 0;
         this.state = { actions: {}, match: {}};
     } 
 
